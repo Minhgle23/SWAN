@@ -1,0 +1,16 @@
+https://gslink.hackerone.com
+https://b.ns.hackerone.com
+https://mta-sts.hackerone.com
+https://a.ns.hackerone.com
+https://mta-sts.managed.hackerone.com
+https://hackerone.com
+https://api.hackerone.com
+https://docs.hackerone.com
+https://resources.hackerone.com
+https://mta-sts.forwarding.hackerone.com
+https://zendesk2.hackerone.com
+https://www.hackerone.com
+https://zendesk4.hackerone.com
+https://zendesk3.hackerone.com
+https://zendesk1.hackerone.com
+https://support.hackerone.com

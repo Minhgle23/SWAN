@@ -1,0 +1,54 @@
+# Nmap 7.97 scan initiated Wed May 21 15:37:58 2025 as: "C:\\Program Files (x86)\\nmap\\nmap.exe" -sV -Pn -T4 --script=default -oN D:/results/portscan\\188_114_98_224.txt 188.114.98.224
+NSE: Script Engine Scan Aborted.
+An error was thrown by the engine: C:\Program Files (x86)\nmap/nse_main.lua:1078: a fatal error occurred in nsock_loop
+stack traceback:
+	[C]: in function 'nmap.socket.loop'
+	C:\Program Files (x86)\nmap/nse_main.lua:1078: in upvalue 'run'
+	C:\Program Files (x86)\nmap/nse_main.lua:1488: in function <C:\Program Files (x86)\nmap/nse_main.lua:1435>
+	[C]: in ?
+Nmap scan report for 188.114.98.224
+Host is up (0.026s latency).
+Not shown: 996 filtered tcp ports (no-response)
+PORT     STATE SERVICE  VERSION
+80/tcp   open  http     Cloudflare http proxy
+|_http-server-header: cloudflare
+|_http-title: Site doesn't have a title (text/plain; charset=UTF-8).
+443/tcp  open  ssl/http Cloudflare http proxy
+| tls-nextprotoneg: 
+|   h2
+|_  http/1.1
+|_http-server-header: cloudflare
+| ssl-cert: Subject: commonName=cdnjs.cloudflare.com
+| Subject Alternative Name: DNS:cdnjs.cloudflare.com, DNS:*.cdnjs.cloudflare.com
+| Not valid before: 2025-03-24T12:00:12
+|_Not valid after:  2025-06-22T13:00:01
+| tls-alpn: 
+|   h2
+|_  http/1.1
+|_http-title: 403 Forbidden
+8080/tcp open  http     Cloudflare http proxy
+|_http-server-header: cloudflare
+|_http-title: Site doesn't have a title (text/plain; charset=UTF-8).
+8443/tcp open  ssl/http Cloudflare http proxy
+| ssl-cert: Subject: commonName=cdnjs.cloudflare.com
+| Subject Alternative Name: DNS:cdnjs.cloudflare.com, DNS:*.cdnjs.cloudflare.com
+| Not valid before: 2025-03-24T12:00:12
+|_Not valid after:  2025-06-22T13:00:01
+|_http-server-header: cloudflare
+| tls-nextprotoneg: 
+|   h2
+|_  http/1.1
+| tls-alpn: 
+|   h2
+|_  http/1.1
+|_http-title: 403 Forbidden
+
+NSE: Script Engine Scan Aborted.
+An error was thrown by the engine: C:\Program Files (x86)\nmap/nse_main.lua:1078: a fatal error occurred in nsock_loop
+stack traceback:
+	[C]: in function 'nmap.socket.loop'
+	C:\Program Files (x86)\nmap/nse_main.lua:1078: in upvalue 'run'
+	C:\Program Files (x86)\nmap/nse_main.lua:1488: in function <C:\Program Files (x86)\nmap/nse_main.lua:1435>
+	[C]: in ?
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Wed May 21 15:38:22 2025 -- 1 IP address (1 host up) scanned in 24.10 seconds

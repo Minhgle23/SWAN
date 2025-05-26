@@ -1,0 +1,4 @@
+https://support.hackerone.com
+https://support.hackerone.com/support/home
+https://support.hackerone.com/support/login
+https://support.hackerone.com/freshid/authorize_callback?hd=https://support.hackerone.com&error=login_required&error_description=user_login_is_required

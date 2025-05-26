@@ -1,0 +1,20 @@
+# Nmap 7.97 scan initiated Sat May 24 23:18:57 2025 as: "C:\\Program Files (x86)\\nmap\\nmap.exe" -sV -Pn -T4 --script=default -oN D:/results/portscan\\172_64_151_42.txt 172.64.151.42
+Nmap scan report for 172.64.151.42
+Host is up (0.050s latency).
+Not shown: 996 filtered tcp ports (no-response)
+PORT     STATE SERVICE       VERSION
+80/tcp   open  http          Cloudflare http proxy
+|_http-title: Site doesn't have a title (text/plain; charset=UTF-8).
+|_http-server-header: cloudflare
+443/tcp  open  ssl/https     cloudflare
+|_http-server-header: cloudflare
+|_http-title: 400 The plain HTTP request was sent to HTTPS port
+8080/tcp open  http          Cloudflare http proxy
+|_http-server-header: cloudflare
+|_http-title: Site doesn't have a title (text/plain; charset=UTF-8).
+8443/tcp open  ssl/https-alt cloudflare
+|_http-server-header: cloudflare
+|_http-title: 400 The plain HTTP request was sent to HTTPS port
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat May 24 23:19:15 2025 -- 1 IP address (1 host up) scanned in 18.67 seconds

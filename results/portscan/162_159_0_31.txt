@@ -1,0 +1,34 @@
+# Nmap 7.97 scan initiated Sat May 24 23:18:04 2025 as: "C:\\Program Files (x86)\\nmap\\nmap.exe" -sV -Pn -T4 --script=default -oN D:/results/portscan\\162_159_0_31.txt 162.159.0.31
+Nmap scan report for 162.159.0.31
+Host is up (0.050s latency).
+Not shown: 995 filtered tcp ports (no-response)
+PORT     STATE SERVICE       VERSION
+53/tcp   open  domain        (unknown banner: 2025.4.3)
+| fingerprint-strings: 
+|   DNSVersionBindReqTCP: 
+|     version
+|     bind
+|_    2025.4.3
+| dns-nsid: 
+|   NSID: 23m853 (32336d383533)
+|   id.server: hkg01
+|_  bind.version: 2025.4.3
+80/tcp   open  http          Cloudflare http proxy
+|_http-server-header: cloudflare
+|_http-title: Site doesn't have a title (text/plain; charset=UTF-8).
+443/tcp  open  ssl/https     cloudflare
+|_http-server-header: cloudflare
+|_http-title: 400 The plain HTTP request was sent to HTTPS port
+8080/tcp open  http          Cloudflare http proxy
+|_http-server-header: cloudflare
+|_http-title: Site doesn't have a title (text/plain; charset=UTF-8).
+8443/tcp open  ssl/https-alt cloudflare
+|_http-server-header: cloudflare
+|_http-title: 400 The plain HTTP request was sent to HTTPS port
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port53-TCP:V=7.97%I=7%D=5/24%Time=6831F14D%P=i686-pc-windows-windows%r(
+SF:DNSVersionBindReqTCP,35,"\x003\0\x06\x85\0\0\x01\0\x01\0\0\0\0\x07versi
+SF:on\x04bind\0\0\x10\0\x03\xc0\x0c\0\x10\0\x03\0\0\0<\0\t\x082025\.4\.3");
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat May 24 23:18:31 2025 -- 1 IP address (1 host up) scanned in 26.71 seconds
