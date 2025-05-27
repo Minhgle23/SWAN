@@ -56,6 +56,19 @@ class RunnerThread(QThread):
             ["python", "api_hunter_updated.py"],
         ]
 
+        scripts = [
+            ["python", "subdomain.py", self.domain],
+            ["python", "resolve_IP.py"],
+            ["python", "Scan_Ports.py"],
+            ["python", "Web_recon.py"],
+            ["python", "api_hunter_updated.py"],
+            ["python", "Database/save_subdomains.py"],
+            ["python", "Database/save_dns_records.py"],
+            ["python", "Database/save_portscan.py"],
+            ["python", "Database/save_web_recon.py"],
+        ]
+
+
         for cmd in scripts:
             self.log_signal.emit(f"\n▶ Đang chạy: {' '.join(cmd)}\n")
             try:

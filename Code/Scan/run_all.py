@@ -12,6 +12,19 @@ SCRIPTS = [
     "../Database/web_recon_DB.py"
 ]
 
+SCRIPTS = [
+    "subdomain.py",
+    "resolve_IP.py",
+    "Scan_Ports.py",
+    "Web_recon.py",
+    "api_hunter_updated.py",
+    "../../Database/save_subdomains.py",
+    "../../Database/save_dns_records.py",
+    "../../Database/save_portscan.py",
+    "../../Database/save_web_recon.py"
+]
+
+
 def run_all():
     for script in SCRIPTS:
         print(f"\n▶ Running: {script}")

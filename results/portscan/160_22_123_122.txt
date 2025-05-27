@@ -1,0 +1,152 @@
+# Nmap 7.97 scan initiated Tue May 27 14:29:52 2025 as: "C:\\Program Files (x86)\\nmap\\nmap.exe" -sV -Pn -T4 --script=default -oN D:/results/portscan\\160_22_123_122.txt 160.22.123.122
+Nmap scan report for 160.22.123.122
+Host is up (1.0s latency).
+Not shown: 980 filtered tcp ports (no-response)
+PORT      STATE  SERVICE      VERSION
+21/tcp    open   ftp          Pure-FTPd
+22/tcp    closed ssh
+25/tcp    open   smtp         Exim smtpd 4.98
+| smtp-commands: server-160-30-113-9.da.direct Hello nmap.scanme.org [118.69.213.124], SIZE 52428800, LIMITS MAILMAX=100 RCPTMAX=150, 8BITMIME, PIPELINING, PIPECONNECT, AUTH PLAIN LOGIN, STARTTLS, HELP
+|_ Commands supported: AUTH STARTTLS HELO EHLO MAIL RCPT DATA BDAT NOOP QUIT RSET HELP
+|_ssl-date: TLS randomness does not represent time
+| ssl-cert: Subject: commonName=server-160-30-113-9.da.direct
+| Subject Alternative Name: DNS:server-160-30-113-9.da.direct
+| Not valid before: 2024-09-11T07:54:17
+|_Not valid after:  2024-12-10T07:54:16
+53/tcp    closed domain
+80/tcp    open   http-proxy   Microsoft ISA Server http proxy
+|_http-server-header: LiteSpeed
+|_http-title: Site doesn't have a title (text/html).
+81/tcp    open   http-proxy   Microsoft ISA Server http proxy
+82/tcp    open   http-proxy   Microsoft ISA Server http proxy
+83/tcp    open   http-proxy   Microsoft ISA Server http proxy
+110/tcp   open   pop3         Dovecot DirectAdmin pop3d
+| ssl-cert: Subject: commonName=server-160-30-113-9.da.direct
+| Subject Alternative Name: DNS:server-160-30-113-9.da.direct
+| Not valid before: 2024-09-11T07:54:17
+|_Not valid after:  2024-12-10T07:54:16
+|_ssl-date: TLS randomness does not represent time
+|_pop3-capabilities: UIDL PIPELINING AUTH-RESP-CODE CAPA RESP-CODES USER TOP SASL(PLAIN) STLS
+113/tcp   closed ident
+143/tcp   open   imap         Dovecot imapd
+|_imap-capabilities: more IDLE ENABLE have Pre-login capabilities ID LOGIN-REFERRALS SASL-IR IMAP4rev1 listed LITERAL+ post-login OK STARTTLS AUTH=PLAINA0001
+|_ssl-date: TLS randomness does not represent time
+| ssl-cert: Subject: commonName=server-160-30-113-9.da.direct
+| Subject Alternative Name: DNS:server-160-30-113-9.da.direct
+| Not valid before: 2024-09-11T07:54:17
+|_Not valid after:  2024-12-10T07:54:16
+443/tcp   open   ssl/https    LiteSpeed
+| ssl-cert: Subject: commonName=server-160-30-113-9.da.direct
+| Subject Alternative Name: DNS:server-160-30-113-9.da.direct
+| Not valid before: 2024-09-11T07:54:17
+|_Not valid after:  2024-12-10T07:54:16
+| fingerprint-strings: 
+|   FourOhFourRequest: 
+|     HTTP/1.0 404 Not Found
+|     content-type: text/html
+|     cache-control: private, no-cache, max-age=0
+|     pragma: no-cache
+|     content-length: 1236
+|     date: Tue, 27 May 2025 07:34:48 GMT
+|     server: LiteSpeed
+|     alt-svc: h3=":443"; ma=2592000, h3-29=":443"; ma=2592000, h3-Q050=":443"; ma=2592000, h3-Q046=":443"; ma=2592000, h3-Q043=":443"; ma=2592000, quic=":443"; ma=2592000; v="43,46"
+|     connection: close
+|     <!DOCTYPE html>
+|     <html style="height:100%">
+|     <head>
+|     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+|     <title> 404 Not Found
+|     </title></head>
+|     <body style="color: #444; margin:0;font: normal 14px/20px Arial, Helvetica, sans-serif; height:100%; background-color: #fff;">
+|     <div style="height:auto; min-height:100%; "> <div style="text-align: center; width:800px; margin-left: -400px; position:absolute; top: 30%; left:50%;">
+|     style="margin:0; font-size:150px; line-h
+|   GetRequest, HTTPOptions: 
+|     HTTP/1.0 200 OK
+|     etag: "33-672dce6a-410b3;;;"
+|     last-modified: Fri, 08 Nov 2024 08:40:10 GMT
+|     content-type: text/html
+|     content-length: 51
+|     accept-ranges: bytes
+|     date: Tue, 27 May 2025 07:34:48 GMT
+|     server: LiteSpeed
+|     alt-svc: h3=":443"; ma=2592000, h3-29=":443"; ma=2592000, h3-Q050=":443"; ma=2592000, h3-Q046=":443"; ma=2592000, h3-Q043=":443"; ma=2592000, quic=":443"; ma=2592000; v="43,46"
+|     connection: close
+|_    <html>OpenLiteSpeed is functioning normally</html>
+|_ssl-date: TLS randomness does not represent time
+|_http-server-header: LiteSpeed
+|_http-title: Site doesn't have a title (text/html).
+465/tcp   open   ssl/smtp     Exim smtpd 4.98
+| ssl-cert: Subject: commonName=server-160-30-113-9.da.direct
+| Subject Alternative Name: DNS:server-160-30-113-9.da.direct
+| Not valid before: 2024-09-11T07:54:17
+|_Not valid after:  2024-12-10T07:54:16
+|_ssl-date: TLS randomness does not represent time
+|_smtp-commands: Couldn't establish connection on port 465
+587/tcp   open   smtp         Exim smtpd 4.98
+|_ssl-date: TLS randomness does not represent time
+| smtp-commands: server-160-30-113-9.da.direct Hello nmap.scanme.org [118.69.213.124], SIZE 52428800, LIMITS MAILMAX=100 RCPTMAX=150, 8BITMIME, PIPELINING, PIPECONNECT, AUTH PLAIN LOGIN, STARTTLS, HELP
+|_ Commands supported: AUTH STARTTLS HELO EHLO MAIL RCPT DATA BDAT NOOP QUIT RSET HELP
+| ssl-cert: Subject: commonName=server-160-30-113-9.da.direct
+| Subject Alternative Name: DNS:server-160-30-113-9.da.direct
+| Not valid before: 2024-09-11T07:54:17
+|_Not valid after:  2024-12-10T07:54:16
+993/tcp   open   imaps?
+|_imap-capabilities: more IDLE ENABLE Pre-login have ID LOGIN-REFERRALS SASL-IR IMAP4rev1 listed LITERAL+ post-login capabilities OK AUTH=PLAINA0001
+|_ssl-date: TLS randomness does not represent time
+| ssl-cert: Subject: commonName=server-160-30-113-9.da.direct
+| Subject Alternative Name: DNS:server-160-30-113-9.da.direct
+| Not valid before: 2024-09-11T07:54:17
+|_Not valid after:  2024-12-10T07:54:16
+995/tcp   open   pop3s?
+| ssl-cert: Subject: commonName=server-160-30-113-9.da.direct
+| Subject Alternative Name: DNS:server-160-30-113-9.da.direct
+| Not valid before: 2024-09-11T07:54:17
+|_Not valid after:  2024-12-10T07:54:16
+|_ssl-date: TLS randomness does not represent time
+|_pop3-capabilities: UIDL TOP PIPELINING SASL(PLAIN) AUTH-RESP-CODE CAPA RESP-CODES USER
+2000/tcp  open   cisco-sccp?
+2222/tcp  closed EtherNetIP-1
+5060/tcp  open   sip?
+35500/tcp closed unknown
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port443-TCP:V=7.97%T=SSL%I=7%D=5/27%Time=68356B17%P=i686-pc-windows-win
+SF:dows%r(GetRequest,1D2,"HTTP/1\.0\x20200\x20OK\r\netag:\x20\"33-672dce6a
+SF:-410b3;;;\"\r\nlast-modified:\x20Fri,\x2008\x20Nov\x202024\x2008:40:10\
+SF:x20GMT\r\ncontent-type:\x20text/html\r\ncontent-length:\x2051\r\naccept
+SF:-ranges:\x20bytes\r\ndate:\x20Tue,\x2027\x20May\x202025\x2007:34:48\x20
+SF:GMT\r\nserver:\x20LiteSpeed\r\nalt-svc:\x20h3=\":443\";\x20ma=2592000,\
+SF:x20h3-29=\":443\";\x20ma=2592000,\x20h3-Q050=\":443\";\x20ma=2592000,\x
+SF:20h3-Q046=\":443\";\x20ma=2592000,\x20h3-Q043=\":443\";\x20ma=2592000,\
+SF:x20quic=\":443\";\x20ma=2592000;\x20v=\"43,46\"\r\nconnection:\x20close
+SF:\r\n\r\n<html>OpenLiteSpeed\x20is\x20functioning\x20normally</html>\n")
+SF:%r(HTTPOptions,1D2,"HTTP/1\.0\x20200\x20OK\r\netag:\x20\"33-672dce6a-41
+SF:0b3;;;\"\r\nlast-modified:\x20Fri,\x2008\x20Nov\x202024\x2008:40:10\x20
+SF:GMT\r\ncontent-type:\x20text/html\r\ncontent-length:\x2051\r\naccept-ra
+SF:nges:\x20bytes\r\ndate:\x20Tue,\x2027\x20May\x202025\x2007:34:48\x20GMT
+SF:\r\nserver:\x20LiteSpeed\r\nalt-svc:\x20h3=\":443\";\x20ma=2592000,\x20
+SF:h3-29=\":443\";\x20ma=2592000,\x20h3-Q050=\":443\";\x20ma=2592000,\x20h
+SF:3-Q046=\":443\";\x20ma=2592000,\x20h3-Q043=\":443\";\x20ma=2592000,\x20
+SF:quic=\":443\";\x20ma=2592000;\x20v=\"43,46\"\r\nconnection:\x20close\r\
+SF:n\r\n<html>OpenLiteSpeed\x20is\x20functioning\x20normally</html>\n")%r(
+SF:FourOhFourRequest,659,"HTTP/1\.0\x20404\x20Not\x20Found\r\ncontent-type
+SF::\x20text/html\r\ncache-control:\x20private,\x20no-cache,\x20max-age=0\
+SF:r\npragma:\x20no-cache\r\ncontent-length:\x201236\r\ndate:\x20Tue,\x202
+SF:7\x20May\x202025\x2007:34:48\x20GMT\r\nserver:\x20LiteSpeed\r\nalt-svc:
+SF:\x20h3=\":443\";\x20ma=2592000,\x20h3-29=\":443\";\x20ma=2592000,\x20h3
+SF:-Q050=\":443\";\x20ma=2592000,\x20h3-Q046=\":443\";\x20ma=2592000,\x20h
+SF:3-Q043=\":443\";\x20ma=2592000,\x20quic=\":443\";\x20ma=2592000;\x20v=\
+SF:"43,46\"\r\nconnection:\x20close\r\n\r\n<!DOCTYPE\x20html>\n<html\x20st
+SF:yle=\"height:100%\">\n<head>\n<meta\x20name=\"viewport\"\x20content=\"w
+SF:idth=device-width,\x20initial-scale=1,\x20shrink-to-fit=no\">\n<title>\
+SF:x20404\x20Not\x20Found\r\n</title></head>\n<body\x20style=\"color:\x20#
+SF:444;\x20margin:0;font:\x20normal\x2014px/20px\x20Arial,\x20Helvetica,\x
+SF:20sans-serif;\x20height:100%;\x20background-color:\x20#fff;\">\n<div\x2
+SF:0style=\"height:auto;\x20min-height:100%;\x20\">\x20\x20\x20\x20\x20<di
+SF:v\x20style=\"text-align:\x20center;\x20width:800px;\x20margin-left:\x20
+SF:-400px;\x20position:absolute;\x20top:\x2030%;\x20left:50%;\">\n\x20\x20
+SF:\x20\x20\x20\x20\x20\x20<h1\x20style=\"margin:0;\x20font-size:150px;\x2
+SF:0line-h");
+Service Info: Host: server-160-30-113-9.da.direct; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue May 27 14:39:21 2025 -- 1 IP address (1 host up) scanned in 569.18 seconds

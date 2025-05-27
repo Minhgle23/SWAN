@@ -3,14 +3,4 @@
 --------------------------------------------------------------------------------
 URL                                           CODE   SERVER       TITLE
 --------------------------------------------------------------------------------
-https://hackerone.com                         [33m302[0m [35m0[0m   S3,Amazon Web Services,Cloudflare,HSTS[0m
-https://mta-sts.forwarding.hackerone.com      [31m404[0m [35m9379[0m not found · GitHub Pages[0m [[35mFastly,GitHub Pages,Varnish[0m
-https://support.hackerone.com                 [33m302[0m [35m108[0m S3,Amazon Web Services,Cloudflare,Cloudflare Bot Management,Envoy,HSTS,HTTP/3[0m
-https://mta-sts.hackerone.com                 [31m404[0m [35m9379[0m not found · GitHub Pages[0m [[35mFastly,GitHub Pages,Varnish[0m
-https://mta-sts.managed.hackerone.com         [31m404[0m [35m9379[0m not found · GitHub Pages[0m [[35mFastly,GitHub Pages,Varnish[0m
-https://www.hackerone.com                     [32m200[0m [35m223892[0m | #1 Trusted Security Platform and Hacker Program[0m [[35mCloudflare,Drupal,Fastly,Google Tag Manager,HSTS,MariaDB,Nginx,PHP,Pantheon,Varnish[0m
-https://resources.hackerone.com               [33m301[0m [35m0[0m   
-https://api.hackerone.com                     [32m200[0m [35m8786[0m API[0m [[35mAlgolia,Cloudflare,HSTS,jsDelivr[0m
-https://docs.hackerone.com                    [33m302[0m [35m0[0m   
-https://gslink.hackerone.com                  [31m404[0m [35m564[0m Not Found[0m [[35mAmazon CloudFront,Amazon Web Services,Nginx[0m
 --------------------------------------------------------------------------------
