@@ -2,11 +2,13 @@ import os
 import sys
 import subprocess
 import sqlite3
+import time
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit,
     QPushButton, QTextEdit, QMessageBox, QHBoxLayout, QComboBox
 )
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from pathlib import Path
 
 # === Thread chạy quét ===
 class RunnerThread(QThread):
@@ -16,18 +18,23 @@ class RunnerThread(QThread):
         self.domain = domain
 
     def run(self):
+        scan_dir = Path("D:/Code/Scan")
+        db_dir = scan_dir / "Database"
+
         scripts = [
-            ["python", "subdomain.py", self.domain],
-            ["python", "resolve_IP.py"],
-            ["python", "Scan_Ports.py"],
-            ["python", "Web_recon.py"],
-            ["python", "api_hunter_updated.py"],
-            ["python", "Database/save_subdomains.py"],
-            ["python", "Database/save_dns_records.py"],
-            ["python", "Database/save_portscan.py"],
-            ["python", "Database/save_web_recon.py"],
+            ["python", scan_dir / "subdomain.py", self.domain],
+            ["python", scan_dir / "resolve_IP.py"],
+            ["python", scan_dir / "Scan_Ports.py"],
+            ["python", scan_dir / "Web_recon.py"],
+            ["python", scan_dir / "api_hunter_updated.py"],
+            ["python", db_dir / "save_subdomains.py"],
+            ["python", db_dir / "save_dns_records.py"],
+            ["python", db_dir / "save_portscan.py"],
+            ["python", db_dir / "save_web_recon.py"],
         ]
+
         for cmd in scripts:
+            cmd = list(map(str, cmd))
             self.log_signal.emit(f"\n▶ Đang chạy: {' '.join(cmd)}\n")
             try:
                 result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
@@ -36,6 +43,12 @@ class RunnerThread(QThread):
                     self.log_signal.emit(f"[Lỗi] {result.stderr}")
             except Exception as e:
                 self.log_signal.emit(f"❌ Lỗi: {e}")
+
+        # Ghi lại lịch sử quét với thời gian và domain
+        history_path = "D:/results/scan_history.txt"
+        with open(history_path, "a", encoding="utf-8") as f:
+            f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {self.domain}\n")
+        self.log_signal.emit("\n✅ Đã ghi lịch sử quét vào scan_history.txt")
 
 # === Giao diện chính ===
 class ScanApp(QWidget):
@@ -65,8 +78,10 @@ class ScanApp(QWidget):
         btn_layout = QHBoxLayout()
         self.scan_button = QPushButton("🔍 Bắt đầu quét")
         self.view_button = QPushButton("📂 Xem dữ liệu")
+        self.history_button = QPushButton("🕒 Xem lịch sử quét")
         btn_layout.addWidget(self.scan_button)
         btn_layout.addWidget(self.view_button)
+        btn_layout.addWidget(self.history_button)
 
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.domain_input)
@@ -80,6 +95,7 @@ class ScanApp(QWidget):
         # Kết nối nút
         self.scan_button.clicked.connect(self.start_scan)
         self.view_button.clicked.connect(self.view_data)
+        self.history_button.clicked.connect(self.view_history)
 
     def start_scan(self):
         domain = self.domain_input.text().strip()
@@ -119,6 +135,15 @@ class ScanApp(QWidget):
 
         except Exception as e:
             self.log_output.setPlainText(f"❌ Lỗi khi đọc DB: {e}")
+
+    def view_history(self):
+        history_path = "D:/results/scan_history.txt"
+        if not os.path.exists(history_path):
+            self.log_output.setPlainText("⚠️ Không tìm thấy file lịch sử: scan_history.txt")
+            return
+        with open(history_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        self.log_output.setPlainText(f"🕒 Lịch sử các lần quét:\n{content}")
 
     def append_log(self, message):
         self.log_output.append(message)
