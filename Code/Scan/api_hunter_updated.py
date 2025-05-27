@@ -25,4 +25,5 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # === STEP 1: Chuẩn hóa URL từ subdomain ===
 with ALIVE_SUBS.open("r") as f:
-    urls = [f"https://{line.strip()}"]()
+    urls = [f"https://{line.strip()}" for line in f]
+

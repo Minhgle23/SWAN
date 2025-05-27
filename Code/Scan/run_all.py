@@ -14,7 +14,7 @@ SCRIPTS = [
 
 def run_all():
     for script in SCRIPTS:
-        print(f"\n▶️ Running: {script}")
+        print(f"\n▶ Running: {script}")
         try:
             subprocess.run(["python", script], check=True)
         except subprocess.CalledProcessError as e:
