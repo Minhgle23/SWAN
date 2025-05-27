@@ -1,8 +1,11 @@
 import subprocess
 import os
+import sys
 from config import SUBFINDER, AMASS, DNSX, ALL_SUBS, ALIVE_SUBS
 
+
 # ========== SUBDOMAIN ENUM ==========
+
 def run_subfinder(domain):
     print("[*] Đang chạy subfinder...")
     try:
@@ -14,6 +17,7 @@ def run_subfinder(domain):
     except subprocess.CalledProcessError as e:
         print("[-] Lỗi subfinder:", e)
         return []
+
 
 def run_amass(domain):
     print("[*] Đang chạy amass...")
@@ -27,7 +31,9 @@ def run_amass(domain):
         print("[-] Lỗi amass:", e)
         return []
 
+
 # ========== ALIVE CHECK ==========
+
 def check_alive(subdomains):
     print("[*] Kiểm tra subdomain sống (dnsx)...")
     try:
@@ -41,7 +47,9 @@ def check_alive(subdomains):
         print("[-] Lỗi dnsx:", e)
         return []
 
+
 # ========== LƯU FILE ==========
+
 def save_to_file(lines, filepath):
     try:
         os.makedirs(filepath.parent, exist_ok=True)
@@ -52,13 +60,21 @@ def save_to_file(lines, filepath):
     except Exception as e:
         print(f"[-] Lỗi khi ghi file: {e}")
 
+
 # ========== MAIN ==========
+
 def main():
-    domain = input("Nhập domain (ví dụ: example.com): ").strip()
+    # Ưu tiên lấy từ sys.argv nếu có
+    if len(sys.argv) > 1:
+        domain = sys.argv[1].strip()
+    else:
+        domain = input("Nhập domain (ví dụ: example.com): ").strip()
+
     if not domain:
         print("⚠️ Không có domain.")
         return
 
+    # Bắt đầu quét
     subs1 = run_subfinder(domain)
     subs2 = run_amass(domain)
     all_subs = sorted(set(subs1 + subs2))
@@ -80,6 +96,7 @@ def main():
         print(f"\nTổng cộng: {len(alive_subs)} / {len(all_subs)} subdomain đang hoạt động.")
     else:
         print("Không có subdomain hoạt động. Ghi domain:", domain)
+
 
 if __name__ == "__main__":
     main()

@@ -1,109 +1,121 @@
+# main_app.py
+import os
 import sys
 import subprocess
-import os
-from pathlib import Path
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QLabel,
-    QLineEdit, QPushButton, QTextEdit
+    QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit,
+    QPushButton, QTextEdit, QMessageBox
 )
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
-# === Cấu hình đường dẫn ===
-SCAN_DIR = Path("D:/Code/Scan")
-DB_DIR = Path("D:/Code/Database")
-INPUT_FILE = SCAN_DIR / "input_domain.txt"
 
-SCRIPTS = [
-    SCAN_DIR / "subdomain.py",
-    SCAN_DIR / "resolve_IP.py",
-    SCAN_DIR / "Scan_Ports.py",
-    SCAN_DIR / "Web_recon.py",
-    SCAN_DIR / "api_hunter_updated.py",
-    DB_DIR / "save_domain_status.py",
-    DB_DIR / "Database_Resolve_IP.py",
-    DB_DIR / "web_recon_DB.py"
-]
+def safe_listdir(path):
+    """Trả về danh sách file, thư mục trong path hoặc bỏ qua nếu không có quyền truy cập."""
+    try:
+        return os.listdir(path)
+    except PermissionError:
+        return []
 
-# === Thread xử lý logic quét ===
-class ScannerThread(QThread):
+
+def safe_walk(top):
+    """
+    Duyệt thư mục theo cách an toàn, bỏ qua thư mục bị giới hạn truy cập,
+    ví dụ 'System Volume Information' trên Windows.
+    """
+    for root, dirs, files in os.walk(top):
+        # Bỏ qua thư mục hệ thống 'System Volume Information' hoặc bất kỳ thư mục nào không muốn duyệt
+        dirs[:] = [d for d in dirs if d != "System Volume Information"]
+
+        # Thử lọc thư mục không truy cập được
+        dirs_copy = dirs[:]
+        for d in dirs_copy:
+            full_path = os.path.join(root, d)
+            try:
+                os.listdir(full_path)
+            except PermissionError:
+                dirs.remove(d)  # Bỏ thư mục không truy cập được
+
+        yield root, dirs, files
+
+
+class RunnerThread(QThread):
     log_signal = pyqtSignal(str)
-    done_signal = pyqtSignal()
 
     def __init__(self, domain):
         super().__init__()
         self.domain = domain
 
     def run(self):
-        try:
-            # Ghi domain vào input file
-            with INPUT_FILE.open("w", encoding="utf-8") as f:
-                f.write(self.domain)
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        os.chdir(script_dir)
+        scripts = [
+            ["python", "subdomain.py", self.domain],
+            ["python", "resolve_IP.py"],
+            ["python", "Scan_Ports.py"],
+            ["python", "Web_recon.py"],
+            ["python", "api_hunter_updated.py"],
+        ]
 
-            for script in SCRIPTS:
-                if not script.exists():
-                    self.log_signal.emit(f"❌ Không tìm thấy script: {script}")
-                    continue
+        for cmd in scripts:
+            self.log_signal.emit(f"\n▶ Đang chạy: {' '.join(cmd)}\n")
+            try:
+                result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+                self.log_signal.emit(result.stdout)
 
-                self.log_signal.emit(f"\n▶️ Chạy script: {script.name}")
-                try:
-                    result = subprocess.run(
-                        ["python", str(script)],
-                        capture_output=True, text=True
-                    )
-                    if result.stdout.strip():
-                        self.log_signal.emit(result.stdout.strip())
-                    if result.stderr.strip():
-                        self.log_signal.emit(f"[STDERR] {result.stderr.strip()}")
-                except Exception as e:
-                    self.log_signal.emit(f"❌ Lỗi khi chạy {script.name}: {e}")
-        finally:
-            self.done_signal.emit()
+                if result.stderr:
+                    # Nếu phát hiện lỗi EPERM trong stderr thì thông báo rõ ràng
+                    if "EPERM" in result.stderr or "PermissionError" in result.stderr:
+                        self.log_signal.emit("[Cảnh báo] Không có quyền truy cập một số thư mục (ví dụ: System Volume Information). Chương trình đã bỏ qua các thư mục này.\n")
+                    else:
+                        self.log_signal.emit(f"[Lỗi] {result.stderr}")
+            except Exception as e:
+                self.log_signal.emit(f"❌ Lỗi khi chạy {' '.join(cmd)}:\n{str(e)}\n")
 
 
-# === Giao diện chính ===
+
 class ScanApp(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Web Auto Security Scanner")
-        self.setGeometry(100, 100, 800, 550)
+        self.setWindowTitle("Security Scan Pipeline")
+        self.setGeometry(300, 200, 700, 500)
 
-        layout = QVBoxLayout()
-        self.label = QLabel("🔎 Nhập domain (ví dụ: example.com):")
-        self.input = QLineEdit()
-        self.btn_run = QPushButton("🚀 Bắt đầu quét")
-        self.output = QTextEdit()
-        self.output.setReadOnly(True)
+        self.layout = QVBoxLayout()
 
-        layout.addWidget(self.label)
-        layout.addWidget(self.input)
-        layout.addWidget(self.btn_run)
-        layout.addWidget(self.output)
-        self.setLayout(layout)
+        self.label = QLabel("Nhập domain (vd: example.com):")
+        self.domain_input = QLineEdit()
+        self.run_button = QPushButton("Bắt đầu quét")
+        self.log_output = QTextEdit()
+        self.log_output.setReadOnly(True)
 
-        self.btn_run.clicked.connect(self.start_scan)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.domain_input)
+        self.layout.addWidget(self.run_button)
+        self.layout.addWidget(self.log_output)
+
+        self.setLayout(self.layout)
+
+        self.run_button.clicked.connect(self.start_scan)
 
     def start_scan(self):
-        domain = self.input.text().strip()
+        domain = self.domain_input.text().strip()
         if not domain:
-            self.output.setText("⚠️ Vui lòng nhập domain.")
+            QMessageBox.warning(self, "Thiếu domain", "Vui lòng nhập domain để quét.")
             return
 
-        self.output.clear()
-        self.output.append(f"🔍 Bắt đầu quét domain: {domain}\n")
-
-        self.btn_run.setEnabled(False)
-        self.thread = ScannerThread(domain)
-        self.thread.log_signal.connect(self.output.append)
-        self.thread.done_signal.connect(self.scan_done)
+        self.run_button.setEnabled(False)
+        self.log_output.clear()
+        self.thread = RunnerThread(domain)
+        self.thread.log_signal.connect(self.append_log)
+        self.thread.finished.connect(lambda: self.run_button.setEnabled(True))
         self.thread.start()
 
-    def scan_done(self):
-        self.output.append("\n✅ Quá trình quét hoàn tất. Kết quả lưu tại: D:/results")
-        self.btn_run.setEnabled(True)
+    def append_log(self, message):
+        self.log_output.append(message)
+        self.log_output.verticalScrollBar().setValue(self.log_output.verticalScrollBar().maximum())
 
-# === Chạy ứng dụng ===
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    win = ScanApp()
-    win.show()
+    window = ScanApp()
+    window.show()
     sys.exit(app.exec_())
