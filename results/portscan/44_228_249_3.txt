@@ -1,0 +1,15 @@
+# Nmap 7.97 scan initiated Tue May 27 16:09:44 2025 as: "C:\\Program Files (x86)\\nmap\\nmap.exe" -sV -Pn -T4 --script=default -oN D:/results/portscan\\44_228_249_3.txt 44.228.249.3
+Nmap scan report for ec2-44-228-249-3.us-west-2.compute.amazonaws.com (44.228.249.3)
+Host is up (0.94s latency).
+Not shown: 995 filtered tcp ports (no-response)
+PORT    STATE  SERVICE    VERSION
+80/tcp  open   http-proxy Microsoft ISA Server http proxy
+|_http-title: Error Message
+81/tcp  open   http-proxy Microsoft ISA Server http proxy
+82/tcp  open   http-proxy Microsoft ISA Server http proxy
+83/tcp  open   http-proxy Microsoft ISA Server http proxy
+113/tcp closed ident
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue May 27 16:14:12 2025 -- 1 IP address (1 host up) scanned in 267.96 seconds
