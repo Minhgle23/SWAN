@@ -1,6 +1,13 @@
 from config import ALIVE_SUBS, HTTPX, KATANA, FFUF, COMMON_WORDLIST
 from pathlib import Path
 import subprocess
+from pathlib import Path
+
+def ensure_file_exists(*paths):
+    for path in paths:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        Path(path).touch(exist_ok=True)
+ensure_file_exists(ALIVE_SUBS)
 
 # === KIỂM TRA FILE INPUT ===
 if not ALIVE_SUBS.exists() or ALIVE_SUBS.stat().st_size == 0:

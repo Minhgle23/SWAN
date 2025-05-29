@@ -13,6 +13,7 @@ from pathlib import Path
 # === Thread chạy quét ===
 class RunnerThread(QThread):
     log_signal = pyqtSignal(str)
+
     def __init__(self, domain):
         super().__init__()
         self.domain = domain
@@ -31,6 +32,8 @@ class RunnerThread(QThread):
             ["python", db_dir / "save_dns_records.py"],
             ["python", db_dir / "save_portscan.py"],
             ["python", db_dir / "save_web_recon.py"],
+            ["python", db_dir / "save_katana.py"],
+            ["python", db_dir / "save_ffuf_to_db.py"]
         ]
 
         for cmd in scripts:
@@ -44,20 +47,21 @@ class RunnerThread(QThread):
             except Exception as e:
                 self.log_signal.emit(f"❌ Lỗi: {e}")
 
-        # Ghi lại lịch sử quét với thời gian và domain
+        # Ghi lịch sử quét
         history_path = "D:/results/scan_history.txt"
         with open(history_path, "a", encoding="utf-8") as f:
             f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {self.domain}\n")
+
         self.log_signal.emit("\n✅ Đã ghi lịch sử quét vào scan_history.txt")
+        self.log_signal.emit("📂 Quét hoàn tất! Bạn có thể chọn database và bảng bên dưới để xem dữ liệu.")
 
 # === Giao diện chính ===
 class ScanApp(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("🛡️ Security Scan Tool")
-        self.setGeometry(300, 200, 900, 600)
+        self.setGeometry(300, 200, 1000, 600)
 
-        # Layout
         self.layout = QVBoxLayout()
 
         self.label = QLabel("Nhập domain (vd: example.com):")
@@ -66,15 +70,11 @@ class ScanApp(QWidget):
         self.log_output = QTextEdit()
         self.log_output.setReadOnly(True)
 
-        # ComboBox chọn database + bảng
-        self.db_combo = QComboBox()
-        self.db_combo.addItems([
-            "dns_results.db:dns_records",
-            "nmap_scan_results.db:port_scan_results",
-            "web_recon.db:httpx_results"
-        ])
+        self.db_select = QComboBox()
+        self.table_select = QComboBox()
+        self.load_databases()
+        self.db_select.currentIndexChanged.connect(self.load_tables)
 
-        # Các nút
         btn_layout = QHBoxLayout()
         self.scan_button = QPushButton("🔍 Bắt đầu quét")
         self.view_button = QPushButton("📂 Xem dữ liệu")
@@ -86,16 +86,56 @@ class ScanApp(QWidget):
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.domain_input)
         self.layout.addLayout(btn_layout)
-        self.layout.addWidget(QLabel("🔽 Chọn database:bảng cần xem:"))
-        self.layout.addWidget(self.db_combo)
+        self.layout.addWidget(QLabel("🔽 Chọn database:"))
+        self.layout.addWidget(self.db_select)
+        self.layout.addWidget(QLabel("🔽 Chọn bảng:"))
+        self.layout.addWidget(self.table_select)
         self.layout.addWidget(self.log_output)
 
         self.setLayout(self.layout)
 
-        # Kết nối nút
         self.scan_button.clicked.connect(self.start_scan)
         self.view_button.clicked.connect(self.view_data)
         self.history_button.clicked.connect(self.view_history)
+
+    def load_databases(self):
+        self.db_select.clear()
+        result_dir = Path("D:/results")
+        db_files = [f.name for f in result_dir.glob("*.db")]
+        self.db_select.addItems(db_files)
+        if db_files:
+            self.load_tables()
+
+    def load_tables(self):
+        self.table_select.clear()
+        db_name = self.db_select.currentText()
+        if not db_name:
+            self.log_output.setPlainText("⚠️ Không có database nào được chọn.")
+            return
+
+        db_path = f"D:/results/{db_name}"
+        if not os.path.exists(db_path):
+            self.log_output.setPlainText(f"⚠️ Không tìm thấy database tại {db_path}")
+            return
+
+        try:
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            tables = [row[0] for row in cursor.fetchall()]
+            conn.close()
+            self.table_select.addItems(tables)
+
+            # Ưu tiên bảng thường dùng
+            preferred_tables = ["katana_results", "ffuf_results"]
+            for name in preferred_tables:
+                if name in tables:
+                    index = tables.index(name)
+                    self.table_select.setCurrentIndex(index)
+                    break
+        except Exception as e:
+            self.log_output.setPlainText(f"❌ Lỗi khi đọc bảng từ DB: {e}")
+
 
     def start_scan(self):
         domain = self.domain_input.text().strip()
@@ -107,12 +147,13 @@ class ScanApp(QWidget):
         self.thread = RunnerThread(domain)
         self.thread.log_signal.connect(self.append_log)
         self.thread.finished.connect(lambda: self.scan_button.setEnabled(True))
+        self.thread.finished.connect(self.load_databases)
         self.thread.start()
 
     def view_data(self):
         try:
-            selected = self.db_combo.currentText()
-            db_name, table = selected.split(":")
+            db_name = self.db_select.currentText()
+            table = self.table_select.currentText()
             db_path = f"D:/results/{db_name}"
 
             if not os.path.exists(db_path):
@@ -150,7 +191,13 @@ class ScanApp(QWidget):
         self.log_output.verticalScrollBar().setValue(self.log_output.verticalScrollBar().maximum())
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = ScanApp()
-    window.show()
-    sys.exit(app.exec_())
+    try:
+        app = QApplication(sys.argv)
+        window = ScanApp()
+        window.show()
+        sys.exit(app.exec_())
+    except Exception as e:
+        import traceback
+        print("❌ Lỗi khi chạy ứng dụng:", e)
+        traceback.print_exc()
+        input("⏸️ Nhấn Enter để thoát...")

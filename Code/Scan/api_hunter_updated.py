@@ -3,8 +3,16 @@ from pathlib import Path
 import subprocess
 import os
 
+def ensure_file_exists(*paths):
+    for path in paths:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        Path(path).touch(exist_ok=True)
+
 # Đường dẫn đến wordlist chứa các path (endpoint)
 wordlist_path = Path(r"D:\wordlists\common.txt")
+ensure_file_exists(ALIVE_SUBS, COMMON_WORDLIST)
+
+
 
 # Kiểm tra file subdomain
 if not ALIVE_SUBS.exists() or ALIVE_SUBS.stat().st_size == 0:

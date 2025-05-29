@@ -1,6 +1,12 @@
 import os
 import subprocess
 from config import ALIVE_SUBS, HTTPX, KATANA, FFUF, COMMON_WORDLIST
+from pathlib import Path
+
+def ensure_file_exists(*paths):
+    for path in paths:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        Path(path).touch(exist_ok=True)
 
 
 # Đường dẫn đến file chứa IP đã resolve
@@ -37,6 +43,11 @@ def run_nmap_scan(ip, output_dir):
     subprocess.run(command)
 
 def main():
+    if not os.path.exists(INPUT_FILE):
+        print(f"⚠️ File {INPUT_FILE} không tồn tại. Tạo file trống.")
+        Path(INPUT_FILE).parent.mkdir(parents=True, exist_ok=True)
+        Path(INPUT_FILE).touch()
+    
     if not os.path.exists(INPUT_FILE):
         raise FileNotFoundError(f"Không tìm thấy file đầu vào: {INPUT_FILE}")
     if not os.path.exists(OUTPUT_DIR):

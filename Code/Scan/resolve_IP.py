@@ -1,6 +1,14 @@
 import subprocess
 from pathlib import Path
-from config import ALIVE_SUBS, RESOLVED_IP, RESOLVERS  # dùng đúng từ config
+from config import ALIVE_SUBS, RESOLVED_IP, RESOLVERS
+from pathlib import Path
+
+def ensure_file_exists(*paths):
+    for path in paths:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        Path(path).touch(exist_ok=True)
+
+ensure_file_exists(ALIVE_SUBS, RESOLVERS)
 
 # === LÀM SẠCH INPUT ===
 def clean_domains(file_path: Path):
