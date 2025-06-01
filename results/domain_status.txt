@@ -1,3 +1,0 @@
-No names were discovered | False
-sieb-web1.testphp.vulnweb.com | False
-www.testphp.vulnweb.com | False

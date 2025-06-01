@@ -1,47 +1,60 @@
-from tools.massdns_tool import MassdnsTool
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+import subprocess
+from tools.base_tool import BaseTool
 from tool_data import ToolData
-from tools.subfinder_tool import SubfinderTool
-from tools.amass_tool import AmassTool
-from tools.dnsx_tool import DnsxTool
 
-def run_pipeline(domain: str):
-    data = ToolData(domain=domain)
+class KatanaTool(BaseTool):
+    def run(self, data: ToolData) -> ToolData:
+        print("[*] Running KatanaTool...")
 
-    tools = [
-        SubfinderTool(),
-        AmassTool(),
-        DnsxTool(),
-        MassdnsTool(),
-    ]
+        if not data.alive_urls:
+            print("⚠️ Không có URL sống để crawl.")
+            return data
 
-    for tool in tools:
-        print(f"\n▶ Running {tool.name()}...")
-        data = tool.run(data)
+        all_links = set()
 
-    # loại bỏ trùng
-    data.urls = sorted(set(data.urls))
+        for url in data.alive_urls:
+            cmd = [
+                "D:/tools/katana.exe",
+                "-u", url,
+                "-js", "-robots", "-sitemap", "-silent"
+            ]
 
-    return data
+            try:
+                print(f"[→] Crawling: {url}")
+                process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-def save_to_file(lines, filepath: str):
-    from pathlib import Path
-    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
-    with open(filepath, "w", encoding="utf-8") as f:
-        for line in lines:
-            f.write(line + "\n")
-    print(f"[✓] Đã lưu {len(lines)} dòng vào {filepath}")
+                for line in process.stdout:
+                    line = line.strip()
+                    if line:
+                        all_links.add(line)
+                        print(" [+]", line)
 
+                process.wait()
+
+                if process.returncode != 0:
+                    err = process.stderr.read()
+                    print(f"[-] Katana lỗi với {url}:\n{err.strip()}")
+
+            except Exception as e:
+                print(f"❌ Lỗi khi chạy katana với {url}: {e}")
+
+        data.urls.extend(sorted(all_links))
+        print(f"[✓] Tổng cộng {len(all_links)} link thu được từ katana.")
+        return data
+
+    def name(self):
+        return "Katana"
+
+# ✅ Test độc lập
 if __name__ == "__main__":
-    domain = input("Nhập domain: ").strip()
-    result = run_pipeline(domain)
+    from tool_data import ToolData
+    test_data = ToolData(alive_urls=["https://hackerone.com"])
+    result = KatanaTool().run(test_data)
 
-    save_to_file(result.urls, "D:/results/all_subs.txt")
-    save_to_file(result.alive_urls or [domain], "D:/results/alive_subs.txt")
-
-    print("\n========== KẾT QUẢ ==========")
-    if result.alive_urls:
-        for sub in result.alive_urls:
-            print(sub)
-        print(f"\nTổng cộng: {len(result.alive_urls)} / {len(result.urls)} subdomain đang hoạt động.")
-    else:
-        print("Không có subdomain hoạt động. Ghi domain:", domain)
+    print("\n🎯 Link thu được:")
+    for link in result.urls:
+        print(" -", link)

@@ -7,3 +7,9 @@ class ToolData:
     urls: List[str] = field(default_factory=list)          # Subdomains
     alive_urls: List[str] = field(default_factory=list)
     resolved_ips: List[str] = field(default_factory=list)  # IP sau khi resolve
+    form_links: List[str] = field(default_factory=list)
+    api_links: List[str] = field(default_factory=list)
+    static_links: List[str] = field(default_factory=list)
+    httpx_results: list[str] = field(default_factory=list)
+    ffuf_paths: list[str] = field(default_factory=list)
+
