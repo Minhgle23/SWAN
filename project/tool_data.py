@@ -12,4 +12,4 @@ class ToolData:
     static_links: List[str] = field(default_factory=list)
     httpx_results: list[str] = field(default_factory=list)
     ffuf_paths: list[str] = field(default_factory=list)
-
+    open_ports: list[int] = field(default_factory=list)

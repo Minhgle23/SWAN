@@ -36,8 +36,7 @@ class HttpxTool(BaseTool):
             "-no-color"
         ]
 
-        try:
-            print("[→] Chạy httpx với các tham số tối ưu...")
+        try:           
             result = subprocess.run(cmd, capture_output=True, text=True, errors="ignore")
 
             if result.returncode != 0:

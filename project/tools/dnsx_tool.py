@@ -1,11 +1,9 @@
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-
 import subprocess
 from tools.base_tool import BaseTool
 from tool_data import ToolData
-
 class DnsxTool(BaseTool):
     def run(self, data: ToolData) -> ToolData:
         print("[*] Running DnsxTool...")
@@ -22,7 +20,15 @@ class DnsxTool(BaseTool):
             )
             alive = result.stdout.strip().splitlines()
             data.alive_urls = alive
-            print(f"[✓] Dnsx tìm được {len(alive)} subdomain sống.")
+
+            if alive:
+                print(f"[✓] Dnsx tìm được {len(alive)} subdomain sống.")
+            else:
+                fallback = "https://" + data.domain
+                data.alive_urls = [fallback]
+                print("⚠️ Không có subdomain sống.")
+                print(f"[~] Sử dụng fallback: {fallback}")
+
         except subprocess.CalledProcessError as e:
             print("[-] Lỗi khi chạy dnsx:", e)
 
@@ -36,7 +42,7 @@ if __name__ == "__main__":
     test_subs = ["www.google.com", "notreal.abc.test"]
     from tool_data import ToolData
 
-    data = ToolData(domain="test.com", urls=test_subs)
+    data = ToolData(domain="google.com", urls=test_subs)
     result = DnsxTool().run(data)
 
     print("\n🎯 Subdomain sống:")
