@@ -1,67 +1,78 @@
 from tool_data import ToolData
+from tools.amass_tool import AmassTool 
 from tools.subfinder_tool import SubfinderTool
-from tools.amass_tool import AmassTool
 from tools.dnsx_tool import DnsxTool
-from tools.httpx_tool import HttpxTool
-from tools.katana_tool import KatanaTool
-from tools.ffuf_tool import FfufTool
 from tools.massdns_tool import MassdnsTool
-from tools.nmap import NmapTool
 
-from concurrent.futures import ThreadPoolExecutor
+from urllib.parse import urlparse
+from pathlib import Path
 
+def clean_domain(raw: str) -> str:
+    parsed = urlparse(raw)
+    return parsed.netloc.strip("/") if parsed.scheme else raw.strip("/")
 
-def run_pipeline(domain: str):
-    print(f"\n🚀 Bắt đầu quét với domain: {domain}")
-    data = ToolData(domain=domain)
+def save_to_file(path: str, lines: list[str]):
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+        print(f"[✓] Đã ghi {len(lines)} dòng vào {path}")
+    except Exception as e:
+        print(f"❌ Không thể ghi file {path}: {e}")
 
-    # 1. Subdomain discovery (subfinder + amass)
-    print("\n🔍 Thu thập subdomain...")
-    for tool in [SubfinderTool(), AmassTool()]:
-        data = tool.run(data)
-    data.urls = sorted(set(data.urls))
+def load_from_file(path: str) -> list[str]:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return [line.strip() for line in f if line.strip()]
+    except FileNotFoundError:
+        print(f"❌ Không tìm thấy file: {path}")
+        return []
 
-    # 2. Alive check (dnsx)
-    print("\n🌐 Kiểm tra subdomain sống...")
-    data = DnsxTool().run(data)
+def main():
+    raw_input_domain = input("🔍 Nhập domain để kiểm tra: ").strip()
+    domain = clean_domain(raw_input_domain)
 
-    # 3. Httpx + Katana song song
-    print("\n🌐 HTTP info + Web crawler (song song)...")
-    with ThreadPoolExecutor() as executor:
-        fut_httpx = executor.submit(HttpxTool().run, data)
-        fut_katana = executor.submit(KatanaTool().run, data)
-        data = fut_httpx.result()
-        data = fut_katana.result()
+    if not domain:
+        print("❌ Domain không hợp lệ.")
+        return
 
-    # 4. Fuzz endpoint (ffuf)
-    print("\n💥 Fuzz endpoint với ffuf...")
-    data = FfufTool().run(data)
+    result_dir = Path("D:/results")
+    result_dir.mkdir(parents=True, exist_ok=True)
 
-    # 5. Resolve IP (massdns)
-    print("\n🌍 Resolve IP với massdns...")
-    data = MassdnsTool().run(data)
+    # 1. Amass
+    amass_tool = AmassTool()
+    data_amass = amass_tool.run(ToolData(domain=domain))
+    save_to_file(result_dir / "amass.txt", data_amass.urls)
 
-    # 6. Port scan (nmap)
-    print("\n🔓 Quét port với Nmap...")
-    data = NmapTool().run(data)
+    # 2. Subfinder
+    subfinder_tool = SubfinderTool()
+    data_sub = subfinder_tool.run(ToolData(domain=domain))
+    save_to_file(result_dir / "subfinder.txt", data_sub.urls)
 
-    # Tổng kết
-    print("\n🎯 TỔNG KẾT:")
-    print(f" - Tổng subdomain     : {len(data.urls)}")
-    print(f" - Subdomain sống     : {len(data.alive_urls)}")
-    print(f" - Katana thu được    : {len(data.urls)} link")
-    print(f"   ├─ Form link        : {len(data.form_links)}")
-    print(f"   ├─ API link         : {len(data.api_links)}")
-    print(f" - FFUF kết quả       : {len(data.ffuf_paths)}")
-    print(f" - IP resolved        : {len(data.resolved_ips)}")
-    print(f" - Port mở (Nmap)     : {len(data.open_ports)}")
+    # 3. Gộp và loại trùng
+    combined = sorted(set(data_amass.urls + data_sub.urls))
+    save_to_file(result_dir / "all_subdomain.txt", combined)
 
-    return data
+    # 4. Dnsx
+    dnsx_tool = DnsxTool()
+    data_input = ToolData(domain=domain, urls=combined)
+    result_dnsx = dnsx_tool.run(data_input)
+
+    alive = result_dnsx.alive_urls
+    alive_path = result_dir / "alive_subs.txt"
+    if alive:
+        save_to_file(alive_path, alive)
+    else:
+        alive = [domain]
+        save_to_file(alive_path, alive)
+        print("⚠️ Không có subdomain sống, đã ghi lại domain gốc.")
+
+    # 5. Massdns (dùng luôn biến alive)
+    massdns_tool = MassdnsTool()
+    resolver_input = ToolData(domain=domain, alive_urls=alive)
+    result_massdns = massdns_tool.run(resolver_input)
+    save_to_file(result_dir / "resolve_ips.txt", result_massdns.resolved_ips)
 
 
 if __name__ == "__main__":
-    domain = input("🌐 Nhập domain (ví dụ: example.com): ").strip()
-    if domain:
-        run_pipeline(domain)
-    else:
-        print("⚠️ Vui lòng nhập domain hợp lệ.")
+    main()
