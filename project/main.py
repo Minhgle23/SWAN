@@ -3,6 +3,7 @@ from tools.amass_tool import AmassTool
 from tools.subfinder_tool import SubfinderTool
 from tools.dnsx_tool import DnsxTool
 from tools.massdns_tool import MassdnsTool
+from tools.nmap import NmapTool
 
 from urllib.parse import urlparse
 from pathlib import Path
@@ -67,12 +68,33 @@ def main():
         save_to_file(alive_path, alive)
         print("⚠️ Không có subdomain sống, đã ghi lại domain gốc.")
 
-    # 5. Massdns (dùng luôn biến alive)
+    # 5. Massdns
     massdns_tool = MassdnsTool()
     resolver_input = ToolData(domain=domain, alive_urls=alive)
     result_massdns = massdns_tool.run(resolver_input)
-    save_to_file(result_dir / "resolve_ips.txt", result_massdns.resolved_ips)
+    resolved_ip_path = result_dir / "resolve_ips.txt"
+    save_to_file(resolved_ip_path, result_massdns.resolved_ips)
 
+    # 6. Nmap scan từ file resolve_ips.txt
+    resolved_ips = load_from_file(str(resolved_ip_path))
+    if resolved_ips:
+        nmap_tool = NmapTool()
+        data_nmap = ToolData(resolved_ips=resolved_ips)
+        result_nmap = nmap_tool.run(data_nmap)
+        save_to_file(result_dir / "nmap_ports.txt", [str(p) for p in result_nmap.open_ports])
+    else:
+        print("⚠️ Không có IP nào để chạy Nmap.")
+
+    
+    # 7. Nmap scan từ file resolve_ips.txt
+    resolved_ips = load_from_file(str(resolved_ip_path))
+    if resolved_ips:
+        nmap_tool = NmapTool()
+        data_nmap = ToolData(resolved_ips=resolved_ips)
+        result_nmap = nmap_tool.run(data_nmap)
+        save_to_file(result_dir / "nmap_ports.txt", [str(p) for p in result_nmap.open_ports])
+    else:
+        print("⚠️ Không có IP nào để chạy Nmap.")
 
 if __name__ == "__main__":
     main()
