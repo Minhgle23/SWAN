@@ -7,6 +7,9 @@ from tools.nmap import NmapTool
 from tools.katana_tool import KatanaTool
 from tools.httpx_tool import HttpxTool
 from tools.ffuf_tool import FfufTool
+from tools.sqlmap_tool import SqlmapTool
+from tools.sqlmap_tool import SqlmapTool
+from tools.dalfox_tool import DalfoxTool
 from urllib.parse import urlparse
 from pathlib import Path
 
@@ -109,12 +112,27 @@ def main():
     ))
     save_to_file(result_dir / "ffuf_paths.txt", data_ffuf.ffuf_paths)
 
-    from tools.sqlmap_tool import SqlmapTool
-
-    # 10. SQL Injection scan
+   
+    # 10. Kiểm thử SQL Injection
     sqlmap_tool = SqlmapTool()
     data_sqlmap = sqlmap_tool.run(ToolData(api_links=data_katana.api_links))
     save_to_file(result_dir / "sql_suspect.txt", data_sqlmap.sqli_results)
+
+    # 11. Chuẩn bị tập XSS target
+    xss_candidates = [url for url in data_katana.urls if any(p in url for p in ["?q=", "?search=", "?s="])]
+    xss_tool = DalfoxTool()
+    data_xss = xss_tool.run(ToolData(xss_targets=xss_candidates))
+    save_to_file(result_dir / "xss_suspect.txt", data_xss.xss_results)
+
+    # 12. Kiểm tra có log hay không
+    if not data_sqlmap.sqli_results and not data_xss.xss_results:
+        print("⚠️ Không phát hiện A03 (SQLi/XSS) → Tiếp tục sang A05")
+    else:
+        if data_sqlmap.sqli_results:
+            print("🛡️ [A03: SQLi] Phát hiện:", len(data_sqlmap.sqli_results))
+        if data_xss.xss_results:
+            print("🛡️ [A03: XSS] Phát hiện:", len(data_xss.xss_results))
+
 
 
 if __name__ == "__main__":

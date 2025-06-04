@@ -16,4 +16,7 @@ class ToolData:
     sqli_results: list[str] = field(default_factory=list)
     xss_targets: list[str] = field(default_factory=list)
     xss_results: list[str] = field(default_factory=list)
+    a05_misconfig: list[str] = field(default_factory=list)
+
+
 
