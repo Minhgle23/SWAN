@@ -92,20 +92,20 @@ class KatanaTool(BaseTool):
         return forms, apis, statics, others
 
 
-# ✅ Test riêng
-if __name__ == "__main__":
-    from tool_data import ToolData
-    test_data = ToolData(alive_urls=["https://hackerone.com"])
-    result = KatanaTool().run(test_data)
+# # ✅ Test riêng
+# if __name__ == "__main__":
+#     from tool_data import ToolData
+#     test_data = ToolData(alive_urls=["https://hackerone.com"])
+#     result = KatanaTool().run(test_data)
 
-    print("\n🧪 FORM URL:")
-    for u in result.form_links:
-        print(" -", u)
+#     print("\n🧪 FORM URL:")
+#     for u in result.form_links:
+#         print(" -", u)
 
-    print("\n🔌 API URL:")
-    for u in result.api_links:
-        print(" -", u)
+#     print("\n🔌 API URL:")
+#     for u in result.api_links:
+#         print(" -", u)
 
-    print("\n📦 STATIC URL:")
-    for u in result.static_links:
-        print(" -", u)
+#     print("\n📦 STATIC URL:")
+#     for u in result.static_links:
+#         print(" -", u)

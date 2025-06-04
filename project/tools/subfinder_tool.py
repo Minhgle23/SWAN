@@ -31,11 +31,11 @@ class SubfinderTool(BaseTool):
         return "Subfinder"
 
 # ✅ Tự chạy để test nếu gọi file này trực tiếp
-if __name__ == "__main__":
-    test_domain = "example.com"
-    tool = SubfinderTool()
-    result = tool.run(ToolData(domain=test_domain))
+# if __name__ == "__main__":
+#     test_domain = "example.com"
+#     tool = SubfinderTool()
+#     result = tool.run(ToolData(domain=test_domain))
 
-    print("\n🎯 Kết quả:")
-    for sub in result.urls:
-        print(" -", sub)
+#     print("\n🎯 Kết quả:")
+#     for sub in result.urls:
+#         print(" -", sub)

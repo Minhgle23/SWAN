@@ -1,0 +1,5 @@
+https://hackerone.com/custom_field_attributes.json
+https://www.hackerone.com/index.php
+https://www.hackerone.com/index.php/product/pentest
+https://hackerone.com/bugs.json
+https://hackerone.com/subscription.json

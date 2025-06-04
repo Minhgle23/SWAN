@@ -29,7 +29,10 @@ class FfufTool(BaseTool):
 
             # Tạo tên file lưu output
             safe_name = url.replace("://", "_").replace("/", "_").replace("?", "_")
-            output_file = Path(f"D:/results/ffuf_{safe_name}.json")
+            output_dir = Path("D:/results/ffuf")
+            output_dir.mkdir(parents=True, exist_ok=True)
+            output_file = output_dir / f"{safe_name}.json"
+
 
             # Chọn chế độ fuzz: path hay param
             if "/FUZZ" in url or url.endswith("/"):
@@ -76,14 +79,14 @@ class FfufTool(BaseTool):
         return "Ffuf"
 
 # ✅ Test riêng
-if __name__ == "__main__":
-    from tool_data import ToolData
-    test = ToolData(
-        api_links=["http://testphp.vulnweb.com/artists.php"],
-        form_links=["http://testphp.vulnweb.com/login.php"]
-    )
-    result = FfufTool().run(test)
+# if __name__ == "__main__":
+#     from tool_data import ToolData
+#     test = ToolData(
+#         api_links=["http://testphp.vulnweb.com/artists.php"],
+#         form_links=["http://testphp.vulnweb.com/login.php"]
+#     )
+#     result = FfufTool().run(test)
 
-    print("\n🎯 Kết quả Ffuf:")
-    for path in result.ffuf_paths:
-        print(" -", path)
+#     print("\n🎯 Kết quả Ffuf:")
+#     for path in result.ffuf_paths:
+#         print(" -", path)

@@ -13,3 +13,7 @@ class ToolData:
     httpx_results: list[str] = field(default_factory=list)
     ffuf_paths: list[str] = field(default_factory=list)
     open_ports: list[int] = field(default_factory=list)
+    sqli_results: list[str] = field(default_factory=list)
+    xss_targets: list[str] = field(default_factory=list)
+    xss_results: list[str] = field(default_factory=list)
+

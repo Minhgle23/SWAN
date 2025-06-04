@@ -37,14 +37,14 @@ class DnsxTool(BaseTool):
     def name(self):
         return "Dnsx"
 
-# ✅ Tự chạy để test nếu gọi trực tiếp
-if __name__ == "__main__":
-    test_subs = ["www.google.com", "notreal.abc.test"]
-    from tool_data import ToolData
+# # ✅ Tự chạy để test nếu gọi trực tiếp
+# if __name__ == "__main__":
+#     test_subs = ["www.google.com", "notreal.abc.test"]
+#     from tool_data import ToolData
 
-    data = ToolData(domain="google.com", urls=test_subs)
-    result = DnsxTool().run(data)
+#     data = ToolData(domain="google.com", urls=test_subs)
+#     result = DnsxTool().run(data)
 
-    print("\n🎯 Subdomain sống:")
-    for sub in result.alive_urls:
-        print(" -", sub)
+#     print("\n🎯 Subdomain sống:")
+#     for sub in result.alive_urls:
+#         print(" -", sub)

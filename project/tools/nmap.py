@@ -41,12 +41,12 @@ class NmapTool(BaseTool):
     def name(self):
         return "Nmap"
 
-# ✅ Test trực tiếp
-if __name__ == "__main__":
-    from tool_data import ToolData
-    data = ToolData(domain="test.com", resolved_ips=["8.8.8.8"])
-    result = NmapTool().run(data)
+# # ✅ Test trực tiếp
+# if __name__ == "__main__":
+#     from tool_data import ToolData
+#     data = ToolData(domain="test.com", resolved_ips=["8.8.8.8"])
+#     result = NmapTool().run(data)
 
-    print("\n🎯 Các port mở:")
-    for port in result.open_ports:
-        print(" -", port)
+#     print("\n🎯 Các port mở:")
+#     for port in result.open_ports:
+#         print(" -", port)

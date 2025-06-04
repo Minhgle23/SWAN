@@ -70,11 +70,11 @@ class MassdnsTool(BaseTool):
         return "Massdns"
 
 # ✅ Test trực tiếp
-if __name__ == "__main__":
-    from tool_data import ToolData
-    test_data = ToolData(alive_urls=["google.com", "microsoft.com"])
-    result = MassdnsTool().run(test_data)
+# if __name__ == "__main__":
+#     from tool_data import ToolData
+#     test_data = ToolData(alive_urls=["google.com", "microsoft.com"])
+#     result = MassdnsTool().run(test_data)
 
-    print("\n🎯 Kết quả IP:")
-    for ip in result.resolved_ips:
-        print(" -", ip)
+    # print("\n🎯 Kết quả IP:")
+    # for ip in result.resolved_ips:
+    #     print(" -", ip)

@@ -4,7 +4,9 @@ from tools.subfinder_tool import SubfinderTool
 from tools.dnsx_tool import DnsxTool
 from tools.massdns_tool import MassdnsTool
 from tools.nmap import NmapTool
-
+from tools.katana_tool import KatanaTool
+from tools.httpx_tool import HttpxTool
+from tools.ffuf_tool import FfufTool
 from urllib.parse import urlparse
 from pathlib import Path
 
@@ -75,7 +77,7 @@ def main():
     resolved_ip_path = result_dir / "resolve_ips.txt"
     save_to_file(resolved_ip_path, result_massdns.resolved_ips)
 
-    # 6. Nmap scan từ file resolve_ips.txt
+    # 6. Nmap scan từ resolve_ips.txt
     resolved_ips = load_from_file(str(resolved_ip_path))
     if resolved_ips:
         nmap_tool = NmapTool()
@@ -85,16 +87,35 @@ def main():
     else:
         print("⚠️ Không có IP nào để chạy Nmap.")
 
-    
-    # 7. Nmap scan từ file resolve_ips.txt
-    resolved_ips = load_from_file(str(resolved_ip_path))
-    if resolved_ips:
-        nmap_tool = NmapTool()
-        data_nmap = ToolData(resolved_ips=resolved_ips)
-        result_nmap = nmap_tool.run(data_nmap)
-        save_to_file(result_dir / "nmap_ports.txt", [str(p) for p in result_nmap.open_ports])
-    else:
-        print("⚠️ Không có IP nào để chạy Nmap.")
+    # 7. Katana - Crawl nội dung từ alive_subs
+    katana_tool = KatanaTool()
+    data_katana = katana_tool.run(ToolData(domain=domain, alive_urls=alive))
+    save_to_file(result_dir / "katana_links.txt", data_katana.urls)
+    save_to_file(result_dir / "katana_form_links.txt", data_katana.form_links)
+    save_to_file(result_dir / "katana_api_links.txt", data_katana.api_links)
+    save_to_file(result_dir / "katana_static_links.txt", data_katana.static_links)
+
+    # 8. Httpx - Quét HTTP title/status/tech từ alive_subs
+    httpx_tool = HttpxTool()
+    data_httpx = httpx_tool.run(ToolData(domain=domain, alive_urls=alive))
+    save_to_file(result_dir / "httpx_output.txt", data_httpx.httpx_results)
+
+    # 9. Ffuf - Fuzz các form/api link từ Katana
+    ffuf_tool = FfufTool()
+    data_ffuf = ffuf_tool.run(ToolData(
+        domain=domain,
+        api_links=data_katana.api_links,
+        form_links=data_katana.form_links
+    ))
+    save_to_file(result_dir / "ffuf_paths.txt", data_ffuf.ffuf_paths)
+
+    from tools.sqlmap_tool import SqlmapTool
+
+    # 10. SQL Injection scan
+    sqlmap_tool = SqlmapTool()
+    data_sqlmap = sqlmap_tool.run(ToolData(api_links=data_katana.api_links))
+    save_to_file(result_dir / "sql_suspect.txt", data_sqlmap.sqli_results)
+
 
 if __name__ == "__main__":
     main()

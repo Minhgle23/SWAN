@@ -59,11 +59,11 @@ class HttpxTool(BaseTool):
         return "Httpx"
 
 # ✅ Test riêng
-if __name__ == "__main__":
-    from tool_data import ToolData
-    test_data = ToolData(alive_urls=["google.com", "microsoft.com"])
-    result = HttpxTool().run(test_data)
+# if __name__ == "__main__":
+#     from tool_data import ToolData
+#     test_data = ToolData(alive_urls=["google.com", "microsoft.com"])
+#     result = HttpxTool().run(test_data)
 
-    print("\n🎯 Kết quả httpx:")
-    for r in result.httpx_results:
-        print(" -", r)
+#     print("\n🎯 Kết quả httpx:")
+#     for r in result.httpx_results:
+#         print(" -", r)
